@@ -14,7 +14,7 @@ def webhook():
 
 @app.route('/view-data')
 def view_data():
-    return render_template('viewer.html', data=received_data)
+    return render_template('data.html', data=received_data)
 
 if __name__ == '__main__':
     app.run(port=5000)
