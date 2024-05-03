@@ -2,13 +2,14 @@
 	import { onMount } from "svelte";
 	import io from "socket.io-client";
 	import Prism from "prismjs";
+	import dotenv from 'dotenv';
 	import "prismjs/components/prism-json.min";
 	import "prismjs/themes/prism-tomorrow.css";
 	import "./styles.css";
 
 	// Load environment variables
-	require('dotenv').config()
-	
+	dotenv.config();
+
 	// Initialize variables
 	let data = [];			// Data received from the server stored in an array so it's gone on page refresh
 	let requestCounter = 0;	// Counter to assign unique id to each request
