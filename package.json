@@ -1,0 +1,20 @@
+{
+  "name": "simple-webhook-listener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:api": "cd api && node server.js",
+    "start:app": "cd app && npm run dev",
+    "start": "concurrently \"npm run start:api\" \"npm run start:app\"",
+    "install:api": "cd api && npm install",
+    "install:app": "cd app && npm install",
+    "install": "npm run install:api && npm run install:app"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
