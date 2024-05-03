@@ -21,7 +21,6 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "prismjs": "^1.29.0",
-    "rollup-plugin-dotenv": "^0.5.1",
     "sirv-cli": "^2.0.0",
     "socket.io-client": "^4.7.5"
   }
