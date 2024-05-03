@@ -9,7 +9,6 @@
 	let data = [];
 	let requestCounter = 0;
 	let selectedId = null;
-
 	const SERVER_URL = process.env.SERVER_URL;
 
 	onMount(() => {
@@ -72,6 +71,7 @@
 			<span
 				class="delete-button"
 				on:click|stopPropagation={() => deleteData(item.id)}
+				on:keydown={(event) => handleKeydown(event, item.id)}
 			>
 				&#x2716;
 			</span>
