@@ -1,15 +1,18 @@
+h1 {
+	padding: 10px;
+}
+
 #sidebar {
-	width: 200px;
+	width: 300px;
 	background: #222;
-	height: 100vh;
 	overflow-y: auto;
 	border-right: 2px solid #444;
+	max-height: 100%;
 }
 
 #main {
-	flex-grow: 1;
-	padding: 20px;
-	color: #ccc;
+	flex: 1;
+	padding: 10px;
 }
 
 #headers,
@@ -20,13 +23,22 @@
 table {
 	width: 100%;
 	border-collapse: collapse;
+	font-size: 14px;
 }
 
 th,
 td {
-	border: 1px solid #555;
-	padding: 8px;
+	padding: 5px;
 	text-align: left;
+	border-bottom: 1px solid #444;
+}
+
+.container {
+	display: flex;
+	flex-direction: row;
+	flex: 1 0 auto; /* Restore '0 auto' */
+	height: 0; /* Add this line */
+	min-height: 0; /* Add this line */
 }
 
 .json-block {
@@ -70,4 +82,48 @@ button {
 
 button:hover {
 	background-color: #555;
+}
+
+.delete-button {
+	display: none;
+	color: #fc618d;
+	cursor: pointer;
+	float: right;
+	margin-right: 5px;
+}
+
+.request-item:hover .delete-button {
+	display: inline-block;
+}
+
+footer {
+	background-color: #222;
+	color: #ccc;
+	padding: 10px;
+	text-align: center;
+	font-size: 14px;
+}
+
+footer a {
+	color: #ccc;
+	text-decoration: none;
+}
+
+footer a:hover {
+	color: #f8b500;
+}
+
+@media (max-width: 768px) {
+	.container {
+		flex-direction: column;
+	}
+
+	#sidebar {
+		width: 100%;
+		max-height: 30vh;
+	}
+
+	h1 {
+		align-self: center;
+	}
 }

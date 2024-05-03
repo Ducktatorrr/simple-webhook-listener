@@ -9,21 +9,20 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-const SERVER_URL = process.env.SERVER_URL;
+const APP_URL = process.env.APP_URL;
+
+// Apply consistent CORS policy for both Express and Socket.IO
+const corsOptions = {
+	origin: APP_URL,
+	methods: ["GET", "POST"],
+	credentials: true,
+};
+
+app.use(cors(corsOptions)); // Apply CORS with the options
+app.use(express.json());
 
 // Configure Socket.IO with CORS
-const io = socketIo(server, {
-	cors: {
-		origin: SERVER_URL, // Allow only the origin where your Svelte app is running
-		methods: ["GET", "POST"],
-		allowedHeaders: ["my-custom-header"],
-		credentials: true,
-	},
-});
-
-app.use(express.json());
-app.use(express.static("public")); // Serve static files from 'public' directory
-app.use(cors()); // This enables CORS for regular routes
+const io = socketIo(server, { cors: corsOptions });
 
 io.on("connection", (socket) => {
 	console.log("New client connected");
@@ -32,31 +31,46 @@ io.on("connection", (socket) => {
 	});
 });
 
-app.post("/webhook", (req, res) => {
-	const timestamp = new Date().toLocaleString("en-US", {
-		day: "2-digit",
-		month: "2-digit",
-		year: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-		second: "2-digit",
-		hour12: false,
-	});
-	const host = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-	const isLocalhost =
-		host === "::1" || host === "::ffff:127.0.0.1" || host === "127.0.0.1";
-	const data = {
-		headers: req.headers,
-		body: req.body,
-		timestamp: timestamp,
-		host: isLocalhost ? "localhost" : host,
-	};
-	console.log("Received webhook:", data);
-	io.emit("webhook_data", data); // Emit data to all connected clients
-	res.status(200).send("Webhook received");
+// Error handling middleware for async operations
+const asyncHandler = (fn) => (req, res, next) =>
+	Promise.resolve(fn(req, res, next)).catch(next);
+
+app.post(
+	"/",
+	asyncHandler(async (req, res) => {
+		const timestamp = new Date().toLocaleString("en-US", {
+			day: "2-digit",
+			month: "2-digit",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			hour12: false,
+		});
+		const host = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+		const isLocalhost =
+			host === "::1" || host === "::ffff:127.0.0.1" || host === "127.0.0.1";
+		const data = {
+			method: req.method,
+			headers: req.headers,
+			body: req.body,
+			timestamp: timestamp,
+			host: isLocalhost ? "localhost" : host,
+		};
+		console.log("Received webhook:", data);
+		io.emit("webhook_data", data);
+		res.status(200).send({ message: "Webhook received" });
+	})
+);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+	console.error(err.stack);
+	res.status(500).send("Something went wrong!");
 });
 
-const PORT = process.env.PORT || 3000;
+// Serve
+const PORT = 3000;
 server.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
