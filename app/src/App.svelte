@@ -1,20 +1,17 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, afterUpdate } from "svelte";
 	import io from "socket.io-client";
 	import Prism from "prismjs";
-	import "prismjs/components/prism-json.min";
-	import "prismjs/themes/prism-tomorrow.css";
+	import "prismjs/components/prism-json";
 	import "./styles.css";
 
-	// Load environment variables
 	// Initialize variables
-	let data = [];			// Data received from the server stored in an array so it's gone on page refresh
-	let requestCounter = 0;	// Counter to assign unique id to each request
-	let selectedId = null;	// State to keep track of selected request
+	let data = []; // Data received from the server stored in an array so it's gone on page refresh
+	let requestCounter = 0; // Counter to assign unique id to each request
+	let selectedId = null; // State to keep track of selected request
 
 	// Get the server URL from the environment variables
 	const API_URL = __api_url__;
-	console.log("API_URL:", API_URL);
 
 	// Connect to the server and listen for incoming data
 	onMount(() => {
@@ -22,7 +19,6 @@
 		socket.on("connect", () => {
 			console.log("Connected to the server");
 		});
-		// Listen for incoming data and add it to the data array
 		socket.on("webhook_data", (newData) => {
 			requestCounter += 1;
 			const newDataWithId = { ...newData, id: requestCounter };
@@ -30,9 +26,23 @@
 		});
 	});
 
+	// Function to update the JSON code block with the selected request data
+	let jsonCodeBlock;
+	function updateJsonCodeBlock() {
+		if (jsonCodeBlock) {
+			const selectedData = data.find((d) => d.id === selectedId);
+			jsonCodeBlock.textContent =
+				selectedData && selectedData.body
+					? JSON.stringify(selectedData.body, null, 2)
+					: "";
+			Prism.highlightElement(jsonCodeBlock); // Trigger Prism to highlight to make it ✨ pretty ✨
+		}
+	}
+
 	// Function to select a request from the data array
 	function selectData(id) {
 		selectedId = id;
+		updateJsonCodeBlock();
 	}
 
 	// Function to delete a request from the data array
@@ -50,14 +60,6 @@
 		}
 	}
 
-	// Function to highlight JSON syntax using Prism to make the JSON ✨ pretty ✨
-	function prismHighlight(node) {
-		const json = JSON.parse(node.textContent);
-		Prism.highlightElement(node, false, () =>
-			Prism.highlight(JSON.stringify(json), Prism.languages.json)
-		);
-	}
-
 	// Function to copy the raw JSON body to the clipboard
 	function copyJsonBody() {
 		const selectedBody = data.find((d) => d.id === selectedId)?.body;
@@ -65,26 +67,28 @@
 			navigator.clipboard.writeText(JSON.stringify(selectedBody, null, 2));
 		}
 	}
-	
+
 	// Function to generate and copy cURL command from the selected request data
 	function copyCurlCommand() {
 		console.log("Attempting to copy cURL command...");
-		const requestData = data.find(d => d.id === selectedId);
-		if (!requestData) {s
+		const requestData = data.find((d) => d.id === selectedId);
+		if (!requestData) {
+			s;
 			console.log("No request data found.");
 			return;
 		}
 
-		const { method, url, headers, body } = requestData;
+		const { method, headers, body } = requestData;
 
 		// Start building the cURL command
-		let curlCmd = `curl -X ${method.toUpperCase()} '${API_URL}'`;	// We take API_URL directly from the environment variables
-																		// because our CORS policy for the API server only allows requests from this URL
-																		// so we can assume that the API server is at this URL
+		let curlCmd = `curl -X ${method.toUpperCase()} '${API_URL}'`; // We take API_URL directly from the environment variables
+		// because our CORS policy for the API server only allows requests from this URL
+		// so we can assume that the API server is at this URL
 
 		// Add headers to the cURL command
 		Object.entries(headers).forEach(([key, value]) => {
-			if (key.toLowerCase() !== 'content-length') { // Exclude Content-Length header to avoid hanging
+			if (key.toLowerCase() !== "content-length") {
+				// Exclude Content-Length header to avoid hanging
 				curlCmd += ` -H '${key}: ${value}'`;
 			}
 		});
@@ -96,16 +100,24 @@
 		}
 
 		// Copy to clipboard
-		navigator.clipboard.writeText(curlCmd).then(() => {
-			console.log('cURL command copied to clipboard!');
-		}).catch(err => {
-			console.error('Failed to copy cURL command:', err);
-		});
+		navigator.clipboard
+			.writeText(curlCmd)
+			.then(() => {
+				console.log("cURL command copied to clipboard!");
+			})
+			.catch((err) => {
+				console.error("Failed to copy cURL command:", err);
+			});
 	}
 
+	afterUpdate(() => {
+		jsonCodeBlock = document.querySelector("#json pre code");
+		// Make ✨ pretty ✨ after updates
+		updateJsonCodeBlock();
+	});
 </script>
 
-<h1>Simple Webhook Listener</h1>
+<h1>🦆 Simple Webhook Listener</h1>
 
 <div class="container">
 	<div id="sidebar">
@@ -157,30 +169,31 @@
 						</table>
 					</div>
 					<div id="json" class="json-block">
-						<pre><code class="language-json" use:prismHighlight
-								>{JSON.stringify(
-									data.find((d) => d.id === selectedId)?.body || {},
-									null,
-									2
-								)}</code
-							></pre>
+						<pre><code class="language-json"></code></pre>
 						<div class="button-container">
 							<button on:click={copyJsonBody}>Copy JSON Body</button>
 						</div>
 					</div>
 				</div>
 			{:else}
-				<p>You've received request! Select one from the sidebar to inspect.</p>
+				<p>
+					You've received request! Select one from the sidebar to inspect 🧐
+				</p>
 			{/if}
 		{:else}
-			<p>No data received yet.</p>
+			<p>Make a POST request to <b>{API_URL}</b> 🚀</p>
+			<p>No data received yet...</p>
 		{/if}
 	</div>
 </div>
 
 <footer>
 	<p>
-		Made with 🦆 by 🦆 - <a href="https://github.com/Ducktatorrr/simple-webhook-listener" target="_blank" rel="noopener noreferrer">Peep Code & Contribute</a>
+		Made with 🦆 by 🦆 - <a
+			href="https://github.com/Ducktatorrr/simple-webhook-listener"
+			target="_blank"
+			rel="noopener noreferrer">Peep Code & Contribute</a
+		>
 	</p>
 </footer>
 
@@ -195,7 +208,7 @@
 		margin: 0;
 		padding: 0;
 		min-height: 100vh;
-  	}
+	}
 
 	.request-item:hover,
 	:global(.request-item.selected) {
