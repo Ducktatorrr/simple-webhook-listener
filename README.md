@@ -7,6 +7,7 @@ As the repository title says, a simple webhook listener with Svelte app frontend
 ## About
 
 I created this project as an exercise to explore Svelte and for personal use to avoid relying on online services for inspecting POST request data. Contributions are always welcome!
+
 Please note: the requests are stored in an array at the app level. If you refresh the page or restart the app the data will reset.
 
 ## Setup
