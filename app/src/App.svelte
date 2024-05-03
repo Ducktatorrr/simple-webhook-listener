@@ -6,6 +6,9 @@
 	import "prismjs/themes/prism-tomorrow.css";
 	import "./styles.css";
 
+	// Load environment variables
+	require('dotenv').config()
+	
 	// Initialize variables
 	let data = [];			// Data received from the server stored in an array so it's gone on page refresh
 	let requestCounter = 0;	// Counter to assign unique id to each request
