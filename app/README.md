@@ -1,6 +1,6 @@
-# Note: So yeah, apperantly this is deprecated so if anyone wants to move it to a Vite based or SvelteKit project that would be awesome.
+# Note: So yeah, apperantly this is way of kickstarting a Svelte app is deprecated so if anyone wants to move it to a Vite based or SvelteKit project that would be awesome.
 
-Below is the auto generated README from svelte-app
+The app still works fine by the way, so nothing funky there. Below is the auto generated README from svelte-app creation.
 
 # This repo is no longer maintained. Consider using `npm init vite` and selecting the `svelte` option or — if you want a full-fledged app framework — use [SvelteKit](https://kit.svelte.dev), the official application framework for Svelte.
 

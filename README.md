@@ -38,7 +38,9 @@ npm start
 ```
 
 Both the API server and Svelte App should will start up.
+
 Now open the Svelte App by visiting `http://localhost:8080/` in your browser.
+
 To make sure everything works make a test POST request to the API:
 
 ```bash
