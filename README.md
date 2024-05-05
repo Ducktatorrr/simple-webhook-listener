@@ -50,3 +50,14 @@ curl -X POST -H "Content-Type: application/json" -d '{"Ayo": "World"}' http://lo
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.
+
+```
+                       _        ______          _
+     /\               | |      |  ____|        | |
+    /  \   _ __  _ __ | | ___  | |__ _   _  ___| | _____ _ __ ___
+   / /\ \ | '_ \| '_ \| |/ _ \ |  __| | | |/ __| |/ / _ \ '__/ __|
+  / ____ \| |_) | |_) | |  __/ | |  | |_| | (__|   <  __/ |  \__ \
+ /_/    \_\ .__/| .__/|_|\___| |_|   \__,_|\___|_|\_\___|_|  |___/
+          | |   | |
+          |_|   |_|
+```
